@@ -20,8 +20,8 @@ app.set('view-engine', 'ejs');
 app.use("/", express.static(__dirname));
 app.use("/", express.urlencoded({ extended: false }));
 app.use(flash());
-app.use(express.cookieParser());
-app.use(express.bodyParser());
+//app.use(express.cookieParser());
+//app.use(express.bodyParser());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false, 
@@ -30,7 +30,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.get('/', (req, res) => {
-    res.render('pages/index.ejs');
+    res.render('pages/index.ejs', { name: req.user.name });
 });
 
 app.get('/login', (req, res) => {

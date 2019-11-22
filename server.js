@@ -10,6 +10,9 @@ const session = require('express-session');
 const initializePassport = require('./passport-config');
 initializePassport(passport, function(email){
     return users.find(function(user){ return user.email === email });
+},
+function(id){
+    return users.find(function(user){ return user.id === id });
 });
 let users = [];
 
@@ -17,6 +20,8 @@ app.set('view-engine', 'ejs');
 app.use("/", express.static(__dirname));
 app.use("/", express.urlencoded({ extended: false }));
 app.use(flash());
+app.use(express.cookieParser());
+app.use(express.bodyParser());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false, 
@@ -25,7 +30,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.get('/', (req, res) => {
-    res.render('pages/index.ejs', { name: bcrypt.hash('Kile')} );
+    res.render('pages/index.ejs');
 });
 
 app.get('/login', (req, res) => {

@@ -1,90 +1,57 @@
+//Developer or Production
 if(process.env.NODE_ENV !== 'production'){
     require('dotenv').config();
 }
+
+//Insert Libraries
 const express = require('express');
 const app = express();
-const bcrypt = require('bcrypt');
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
-const initializePassport = require('./passport-config');
+const mongoose = require('mongoose');
 const methodOverride = require('method-override');
-initializePassport(passport, function(email){
-    return users.find(function(user){ return user.email === email });
-},
-function(id){
-    return users.find(function(user){ return user.id === id });
-});
-let users = [];
+const expressLayouts = require('express-ejs-layouts');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-app.set('view-engine', 'ejs');
+//Connect to Mongo
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then( () => console.log('MongoDB Connected...') )
+    .catch ( err => console.log(err) );
+
+//EJS
+app.set('view engine', 'ejs');
+app.use(expressLayouts);
+app.set('layout', 'layouts/layout');
+
+//Static Folder
 app.use("/", express.static(__dirname));
+
+//URL Encode
 app.use("/", express.urlencoded({ extended: false }));
+
+//Flash
 app.use(flash());
-//app.use(express.cookieParser());
-//app.use(express.bodyParser());
+
+//Cookie Parser
+app.use(cookieParser());
+
+//Body Parser
+app.use(bodyParser());
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave: false, 
+    resave: false,
     saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride('_method'));
-app.get('/', checkAuthenticated, (req, res) => {
-    res.render('pages/index.ejs', { name: req.user.name });
-});
 
-app.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('pages/login.ejs');
-});
+//Routes
+app.use('/', require('./routes'));
 
-app.post('/login', checkNotAuthenticated, passport.authenticate('local',{
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true 
-}));
-
-app.get('/register', checkNotAuthenticated, (req, res) => {
-    res.render('pages/register.ejs');
-});
-
-app.post('/register', checkNotAuthenticated, async (req, res) => {
-    try {
-        const hashedPassword = await bcrypt.hash(req.body.inputPassword, 10);
-        users.push({
-            id: Date.now().toString(),
-            name: req.body.inputName,
-            email: req.body.inputEmail,
-            password: hashedPassword
-        });
-        res.redirect('/login');
-    } catch {
-        res.redirect('/register');
-    }
-    console.log(users);
-    //res.render('pages/register.ejs');
-});
-
-app.delete('/logout', (req, res) => {
-    req.logOut();
-    res.redirect('/login');
-});
-
-function checkAuthenticated(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    } else {
-        return res.redirect('/login');
-    }
-}
-
-function checkNotAuthenticated(req, res, next){
-    if(req.isAuthenticated()){
-        return res.redirect('/');
-    } else {
-        return next();
-    }
-}
-
-app.listen(3000);
+//Listen PORT
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => console.log(`Server started on port ${ PORT }`));

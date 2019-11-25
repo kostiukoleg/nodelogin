@@ -1,37 +1,24 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8; X-Content-Type-Options=nosniff"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/../views/static/signin.css">
-
-    <title>Hello, world!</title>
-  </head>
-  <body>
-    <form class="form-signin" action="/register" method="POST">
-      <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
-      <label for="inputName" class="sr-only">Name</label>
-      <input type="text" id="inputName" class="form-control" name="inputName" placeholder="Name" required="" autofocus="">
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="inputEmail" class="form-control" name="inputEmail" placeholder="Email address" required="" autofocus="">
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="inputPassword" class="form-control" name="inputPassword" placeholder="Password" required="">
-      <div class="checkbox mb-3">
-        <label>
-          <a href="/login">Login</a>
-        </label>
-      </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
-      <p class="mt-5 mb-3 text-muted">© 2017-2019</p>
-    </form>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="/../views/static/jquery-3.4.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="/../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-  </body>
-</html>
+<form class="form-signin" action="/register" method="POST">
+  <% if ( messages.error !== undefined ) {%>
+    <div class="alert alert-warning alert-dismissible fade <%= 'show' %>" role="alert">
+      <%= messages.error %>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  <% } %>
+  <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
+  <label for="inputName" class="sr-only">Name</label>
+  <input type="text" id="inputName" class="form-control" name="inputName" placeholder="Name" required="" autofocus="">
+  <label for="inputEmail" class="sr-only">Email address</label>
+  <input type="email" id="inputEmail" class="form-control" name="inputEmail" placeholder="Email address" required="" autofocus="">
+  <label for="inputPassword" class="sr-only">Password</label>
+  <input type="password" id="inputPassword" class="form-control" name="inputPassword" placeholder="Password" required="">
+  <div class="checkbox mb-3">
+    <label>
+      <a href="/login">Login</a>
+    </label>
+  </div>
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+  <p class="mt-5 mb-3 text-muted">© 2017-2019</p>
+</form>
